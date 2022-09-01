@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+
 using pottencial_dev_week.src.Models;
+using pottencial_dev_week.src.Persistence;
 
 namespace src.Controllers;
 
@@ -8,23 +10,32 @@ namespace src.Controllers;
 public class PersonController : ControllerBase
 {
 
-    [HttpGet]
-    public Person get()
+    public PersonController(DatabaseContext context)
     {
-        Person pessoa = new Person("Brendo", 24, "25287412");
-        Contract contract = new Contract("abscr", 50.99);
-        pessoa.Contracts.Add(contract);
-        
-        return pessoa;
+        this._repository = context;
     }
+
+    private DatabaseContext _repository { get; set; }
+
+    [HttpGet]
+    public List<Person> get()
+    {        
+       return _repository.Persons.ToList();        
+    }
+
     [HttpPost]
     public Person Post(Person person)
     {
+        _repository.Persons.Add(person);
+        _repository.SaveChanges();
         return person;
     }
 
     [HttpPut("{id}")]
-    public string update ([FromRoute] int id) {
-        return "dados do id " + id + " atualizados!!!";
+    public Person update ([FromRoute] int id, [FromBody] Person person) {
+        _repository.Persons.Update(person);
+        _repository.SaveChanges();
+        
+        return person;
     }
 }

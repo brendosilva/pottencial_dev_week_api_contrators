@@ -23,6 +23,10 @@ public class Contract
     public double Value { get; set; }
     public bool Pago { get; set; }
 
+    public int Id { get; set; }
+
+    public int PersonId { get; set; }
+
 
 
 }
